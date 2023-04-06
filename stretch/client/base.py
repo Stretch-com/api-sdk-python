@@ -25,16 +25,17 @@ class WebClient(ABC):
         client_secret: str = "",
         base_url: str = "https://api.stretch.com/api/v1",
         refresh_url: str = "/auth/refresh",
+        profiling: bool = False,
     ):
         self._refresh_expire = None
         self._refresh_token = None
         self._access_expire = None
         self._access_token = None
+        self._profiling = profiling
         self._base_url = base_url
         self._refresh_url = refresh_url
         if client_secret is None:
             client_secret = ""
-        print(f"{client_id}:{client_secret}")
         self._basic = base64.b64encode(f"{client_id}:{client_secret}".encode("latin1")).decode("ascii").strip()
         self._default_headers = None
 

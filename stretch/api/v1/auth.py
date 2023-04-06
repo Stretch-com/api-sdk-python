@@ -16,14 +16,40 @@ class Auth(ApiBase):
         response = self.token(username, password)
         return response.access_token is not None
 
-    def user(self):
+    def guest(self):
+        """
+        Login as guest account ( client role )
+        """
+        response = self.post_guest()
+        return response.access_token is not None
+
+    def get_user(self):
         """
         Get user information
         """
         return self._fetch(Method.get, "/auth/user")
 
-    def guest(self):
-        return
+    def put_user(self, **kwargs):
+        """
+        Update user information
+        """
+        return self._fetch(Method.put, "/auth/user", json=kwargs)
+
+    def post_guest(self, auto_save: bool = True):
+        headers = {
+            "Authorization": f"Basic {self._core.provider.basic}",
+        }
+        data = {"grant_type": "create"}
+        response: Token = self._fetch(Method.post, "/auth/guest", json=data, headers=headers, model=Token)
+        return self._update_token(response, auto_save)
+
+    def post_signup(self, phone: str, type: str = "client", auto_save=True):
+        headers = {
+            "Authorization": f"Basic {self._core.provider.basic}",
+        }
+        data = {"grant_type": "create", "phone": phone, "type": type}
+        response: Token = self._fetch(Method.post, "/auth/signup", json=data, headers=headers, model=Token)
+        return self._update_token(response, auto_save)
 
     def token(
         self, username: str, password: str, scope: str = None, auto_save: bool = True
@@ -40,6 +66,9 @@ class Auth(ApiBase):
             data["scope"] = scope
 
         response: Token = self._fetch(Method.post, "/auth/token", data=data, headers=headers, model=Token)
+        return self._update_token(response, auto_save)
+
+    def _update_token(self, response: Token, auto_save=False):
         if auto_save:
             self._core.provider.set_token(
                 access_token=response.access_token,
