@@ -21,9 +21,12 @@ def main():
     if login:
         # resp = stretch.auth.get_user()
         # print("user:", resp)
-
-        resp = stretch.storage.avatar("/Users/iuriibell/dev/api-stretch/test.jpeg")
+        url = "/Users/iuriibell/dev/api-stretch/test.jpeg"
+        # url = "https://www.denofgeek.com/wp-content/uploads/2022/05/Leged-of-Zelda-Link.jpg"
+        resp = stretch.storage.post_image(url, "test image")
         print(resp)
+        # resp = stretch.storage.post_image(url, "title image")
+        # print(resp)
 
     return
     session = stretch.auth.signup(phone, "coach")

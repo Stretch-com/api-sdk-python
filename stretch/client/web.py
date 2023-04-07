@@ -58,7 +58,7 @@ class SyncWebClient(WebClient):
         response = None
 
         if files is not None and headers is None:
-            headers = self._default_headers
+            headers = self._default_headers.copy()
             del headers["Content-Type"]
 
         if method == Method.get:
