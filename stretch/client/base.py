@@ -63,5 +63,7 @@ class WebClient(ABC):
         return self._basic
 
     @abstractmethod
-    def fetch(self, method: Method, url: str, params: Dict | None = None, data=None, json=None, headers=None):
+    def fetch(
+        self, method: Method, url: str, params: Dict | None = None, data=None, json=None, files=None, headers=None
+    ):
         pass

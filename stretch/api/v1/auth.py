@@ -23,6 +23,13 @@ class Auth(ApiBase):
         response = self.post_guest()
         return response.access_token is not None
 
+    def signup(self, phone: str, user_type: str = "client"):
+        """
+        Signup new account: client, coach or studio
+        """
+        response = self.post_signup(phone, user_type)
+        return response.session if hasattr(response, "session") else None
+
     def get_user(self):
         """
         Get user information
@@ -48,8 +55,29 @@ class Auth(ApiBase):
             "Authorization": f"Basic {self._core.provider.basic}",
         }
         data = {"grant_type": "create", "phone": phone, "type": type}
-        response: Token = self._fetch(Method.post, "/auth/signup", json=data, headers=headers, model=Token)
-        return self._update_token(response, auto_save)
+        response = self._fetch(Method.post, "/auth/signup", json=data, headers=headers)
+        self._update_token(Token.create(**response.dict()), auto_save)
+        return response
+
+    def post_verify_phone(self, session: str, channel: str = "sms"):
+        """
+        Create request for sending verification sms
+        """
+        return self._fetch(Method.post, "/auth/verify/phone", json={"session": session, "channel": channel})
+
+    def put_verify_phone(self, sid: str, code: str):
+        """
+        Verify sms code for current session
+        """
+        return self._fetch(Method.put, "/auth/verify/phone", json={"sid": sid, "code": code})
+
+    def put_complete(self, **kwargs):
+        """
+        Complete user registration
+        """
+        response = self._fetch(Method.put, "/auth/complete", json=kwargs)
+        self._update_token(Token.create(**response.dict()), True)
+        return response
 
     def token(
         self, username: str, password: str, scope: str = None, auto_save: bool = True

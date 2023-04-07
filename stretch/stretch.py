@@ -2,6 +2,7 @@ import urllib
 
 from stretch.api.v1.auth import Auth
 from stretch.api.v1.search import Search
+from stretch.api.v1.storage import Storage
 from .client.web import SyncWebClient
 
 
@@ -12,6 +13,7 @@ class Stretch:
 
     auth: Auth = None
     search: Search = None
+    storage: Storage = None
 
     def __init__(
         self, client_id, client_secret=None, base_url="https://api.stretch.com", api_version=1, profiling=False
@@ -25,6 +27,7 @@ class Stretch:
         )
         self.auth = Auth(self)
         self.search = Search(self)
+        self.storage = Storage(self)
 
     @property
     def provider(self):

@@ -40,7 +40,15 @@ class SyncWebClient(WebClient):
             return self.refresh()
 
     def fetch(
-        self, method: Method, url: str, params: Dict | None = None, data=None, json=None, headers=None, check=True
+        self,
+        method: Method,
+        url: str,
+        params: Dict | None = None,
+        data=None,
+        json=None,
+        headers=None,
+        files=None,
+        check=True,
     ):
         if self._profiling:
             _start = datetime.datetime.utcnow()
@@ -49,10 +57,14 @@ class SyncWebClient(WebClient):
         url = f"{self._base_url}{url}"
         response = None
 
+        if files is not None and headers is None:
+            headers = self._default_headers
+            del headers["Content-Type"]
+
         if method == Method.get:
             response = self._session.get(url, data=data, json=json, params=params, headers=headers)
         elif method == Method.post:
-            response = self._session.post(url, data=data, json=json, params=params, headers=headers)
+            response = self._session.post(url, data=data, json=json, params=params, files=files, headers=headers)
         elif method == Method.put:
             response = self._session.put(url, data=data, json=json, params=params, headers=headers)
         elif method == Method.delete:
@@ -62,7 +74,7 @@ class SyncWebClient(WebClient):
 
         if response is not None and 200 <= response.status_code < 400:
             if self._profiling:
-                print(
+                logging.info(
                     f"[Request {method.value}] {(datetime.datetime.utcnow() - _start).microseconds/1000} ms url {url}"
                 )
             return response.json()

@@ -1,31 +1,42 @@
+import os
 import time
 
 from stretch import Stretch
 
+client_id = os.getenv("MY_ACCOUNT_CLIENT_ID", None)
+base_url = os.getenv("STRETCH_API_URL", "https://api.stretch.com")
+
 
 def main():
     print("Start singin example")
-    stretch = Stretch(
-        base_url="http://localhost:8000", client_id="2f9445b3-5266-45cd-8a85-d5c3fff69781", profiling=True
-    )
+    stretch = Stretch(base_url=base_url, client_id=client_id, profiling=True)
     time.sleep(1)
-    # login = stretch.auth.login("bell", "123456")
-    login = stretch.auth.guest()
-    print("Login:", login)
+
+    username = "coach-test2"
+    phone = "+999111111112"
+    password = "123456"
+
+    login = stretch.auth.login("coach0", "123456")
+
     if login:
-        resp = stretch.auth.get_user()
-        # resp = stretch.auth.put_user(gender="female")
-        # resp = stretch.auth.post_guest()
-        # resp = stretch.auth.post_phone_check()
-        # resp = stretch.auth.post_verify_phone()
-        # resp = stretch.auth.put_verify_phone()
-        print("User: info:", resp)
-        # resp = stretch.auth.user()
-        # print("User: info:", resp)
+        # resp = stretch.auth.get_user()
+        # print("user:", resp)
 
-        coaches = stretch.search.post()
+        resp = stretch.storage.avatar("/Users/iuriibell/dev/api-stretch/test.jpeg")
+        print(resp)
 
-        print("Coaches:", coaches)
+    return
+    session = stretch.auth.signup(phone, "coach")
+    print("signup session:", session)
+    if session:
+        verify = stretch.auth.post_verify_phone(session)
+        print("verify create:", verify)
+        check = stretch.auth.put_verify_phone(verify.sid, "0000")
+        print("verify check:", check)
+        complete = stretch.auth.put_complete(
+            gender="male", password=password, username=username, firstNmae="Test1", lastName="last"
+        )
+        print("complete:", complete)
 
 
 if __name__ == "__main__":
