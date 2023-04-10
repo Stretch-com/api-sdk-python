@@ -1,4 +1,5 @@
-from .base import Base, dataclass
+from .base import Base
+from dataclasses import dataclass
 
 
 @dataclass()

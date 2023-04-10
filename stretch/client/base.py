@@ -26,7 +26,9 @@ class WebClient(ABC):
         base_url: str = "https://api.stretch.com/api/v1",
         refresh_url: str = "/auth/refresh",
         profiling: bool = False,
+        ssl_verify: bool = True,
     ):
+        self._ssl_verify = ssl_verify
         self._refresh_expire = None
         self._refresh_token = None
         self._access_expire = None
