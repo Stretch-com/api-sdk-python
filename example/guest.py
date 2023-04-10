@@ -1,8 +1,6 @@
 import os
-import time
 
 from stretch import Stretch
-
 
 client_id = os.getenv("MY_ACCOUNT_CLIENT_ID", None)
 base_url = os.getenv("STRETCH_API_URL", "https://api.stretch.com")

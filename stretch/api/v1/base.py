@@ -1,5 +1,6 @@
+from typing import Any, Dict, List, Union
+
 from stretch.client.base import Method
-from typing import Union, Dict, Any, List
 
 
 class ResponseStruct:

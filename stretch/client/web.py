@@ -1,7 +1,9 @@
 import datetime
-from typing import Dict
 import logging
+from typing import Dict
+
 import requests
+
 from stretch.api.v1.schema.token import Token
 
 from .base import Method, StretchExceptions, WebClient
@@ -56,21 +58,16 @@ class SyncWebClient(WebClient):
             self.check_and_update_token()
         url = f"{self._base_url}{url}"
         response = None
-
-        if files is not None and headers is None:
-            headers = self._default_headers.copy()
-            del headers["Content-Type"]
-
         if method == Method.get:
-            response = self._session.get(url, data=data, json=json, params=params, headers=headers)
+            response = self._session.get(url, data=data, json=json, params=params, files=files, headers=headers)
         elif method == Method.post:
             response = self._session.post(url, data=data, json=json, params=params, files=files, headers=headers)
         elif method == Method.put:
-            response = self._session.put(url, data=data, json=json, params=params, headers=headers)
+            response = self._session.put(url, data=data, json=json, params=params, files=files, headers=headers)
         elif method == Method.delete:
-            response = self._session.delete(url, data=data, json=json, params=params, headers=headers)
+            response = self._session.delete(url, data=data, json=json, params=params, files=files, headers=headers)
         elif method == Method.patch:
-            response = self._session.patch(url, data=data, json=json, params=params, headers=headers)
+            response = self._session.patch(url, data=data, json=json, params=params, files=files, headers=headers)
 
         if response is not None and 200 <= response.status_code < 400:
             if self._profiling:

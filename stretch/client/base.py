@@ -55,7 +55,7 @@ class WebClient(ABC):
 
         self._default_headers = {
             "Authorization": f"{token_type} {self._access_token}",
-            "Content-Type": "application/json",
+            # "Content-Type": "application/json",
         }
 
     @property

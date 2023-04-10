@@ -1,7 +1,6 @@
-from .base import ApiBase
-from .schema.token import Token
-from typing import Awaitable, Union
 from stretch.client.base import Method
+
+from .base import ApiBase
 
 
 class Search(ApiBase):

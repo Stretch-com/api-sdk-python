@@ -1,8 +1,9 @@
-import urllib
-
 from stretch.api.v1.auth import Auth
+from stretch.api.v1.coach import Coach
+from stretch.api.v1.nav import Nav
 from stretch.api.v1.search import Search
 from stretch.api.v1.storage import Storage
+
 from .client.web import SyncWebClient
 
 
@@ -26,6 +27,8 @@ class Stretch:
             client_id=client_id, client_secret=client_secret, base_url=self._api_url, profiling=profiling
         )
         self.auth = Auth(self)
+        self.coach = Coach(self)
+        self.nav = Nav(self)
         self.search = Search(self)
         self.storage = Storage(self)
 
