@@ -1,5 +1,5 @@
 from .base import Base
-from dataclasses import dataclass # fix
+from dataclasses import dataclass
 
 
 @dataclass()
