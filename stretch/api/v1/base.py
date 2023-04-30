@@ -1,3 +1,4 @@
+from re import sub
 from typing import Any, Dict, List, Union
 
 from stretch.client.base import Method
@@ -8,7 +9,17 @@ class ResponseStruct:
         self.__dict__.update(entries)
 
     def __repr__(self) -> str:
-        return "{ " + ", ".join(f"{k} = {v}" for k, v in self.dict().items()) + " }"
+        return "{ " + ", ".join(f"{k}={v}" for k, v in self.dict().items()) + " }"
+
+    def __getattr__(self, item):
+        s = sub(r"(_|-)+", " ", item).title().replace(" ", "")
+        if len(s) > 1:
+            camel_case = "".join([s[0].lower(), s[1:]])
+            if camel_case in self.__dict__:
+                return getattr(self, camel_case)
+        raise AttributeError(
+            f"Stretch API Response don't have property '{item}' check list: {', '.join(self.__dict__.keys())}"
+        )
 
     def dict(self) -> dict:
         return self.__dict__

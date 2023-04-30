@@ -1,3 +1,5 @@
+from copy import copy
+
 from stretch.api.v1.auth import Auth
 from stretch.api.v1.coach import Coach
 from stretch.api.v1.nav import Nav
@@ -25,6 +27,8 @@ class Stretch:
         profiling=False,
         ssl_verify=True,
     ):
+        self._user_id = None
+        self._access_token = None
         self._api_url = f"{base_url}/api/v{api_version}"
         self._api = __import__(f"stretch.api.v{api_version}")
         self._client_id = client_id
@@ -45,3 +49,14 @@ class Stretch:
     @property
     def provider(self):
         return self._provider
+
+    def __call__(self, *args, **kwargs):
+        obj = copy(self)
+        if "user_id" in kwargs:
+            obj._user_id = kwargs["user_id"]
+            obj._provider.set_user(obj._user_id)
+        if "access_token" in kwargs:
+            obj._access_token = kwargs["access_token"]
+            obj._provider.set_token(access_token=obj._access_token)
+            obj._provider._access_expire = None
+        return obj
