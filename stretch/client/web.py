@@ -13,6 +13,7 @@ class SyncWebClient(WebClient):
     def __init__(self, *args, **kwargs):
         super(SyncWebClient, self).__init__(*args, **kwargs)
         self._session = requests.Session()
+        self._session.verify = self._ssl_verify
 
     def set_token(self, access_token, access_expire, refresh_token, refresh_expire, token_type="Bearer"):
         super(SyncWebClient, self).set_token(access_token, access_expire, refresh_token, refresh_expire, token_type)

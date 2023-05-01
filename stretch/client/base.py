@@ -26,7 +26,10 @@ class WebClient(ABC):
         base_url: str = "https://api.stretch.com/api/v1",
         refresh_url: str = "/auth/refresh",
         profiling: bool = False,
+        ssl_verify: bool = True,
     ):
+        self._user_id = None
+        self._ssl_verify = ssl_verify
         self._refresh_expire = None
         self._refresh_token = None
         self._access_expire = None
@@ -39,7 +42,7 @@ class WebClient(ABC):
         self._basic = base64.b64encode(f"{client_id}:{client_secret}".encode("latin1")).decode("ascii").strip()
         self._default_headers = None
 
-    def set_token(self, access_token, access_expire, refresh_token, refresh_expire, token_type="Bearer"):
+    def set_token(self, access_token, access_expire=None, refresh_token=None, refresh_expire=None, token_type="Bearer"):
         if access_token is not None:
             self._access_token = access_token
         if access_expire is not None:
@@ -57,6 +60,11 @@ class WebClient(ABC):
             "Authorization": f"{token_type} {self._access_token}",
             # "Content-Type": "application/json",
         }
+
+    def set_user(self, user_id):
+        self._user_id = user_id
+        if self._user_id is not None:
+            self._default_headers["Authorization-User"] = self._user_id
 
     @property
     def basic(self):
