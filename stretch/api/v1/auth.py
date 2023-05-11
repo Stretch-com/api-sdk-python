@@ -2,10 +2,11 @@ from typing import Awaitable, Union
 
 from stretch.client.base import Method
 
-from .base import ApiBase
+from .base import ApiBase, api_decoration_func, for_all_methods
 from .schema.token import Token
 
 
+@for_all_methods(api_decoration_func)
 class Auth(ApiBase):
     """
     Auth Stretch API

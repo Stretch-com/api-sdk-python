@@ -26,6 +26,7 @@ class Stretch:
         api_version=1,
         profiling=False,
         ssl_verify=True,
+        provider=SyncWebClient,
     ):
         self._user_id = None
         self._access_token = None
@@ -33,13 +34,14 @@ class Stretch:
         self._api = __import__(f"stretch.api.v{api_version}")
         self._client_id = client_id
         self._client_secret = client_secret
-        self._provider = SyncWebClient(
+        self._provider = provider(
             client_id=client_id,
             client_secret=client_secret,
             base_url=self._api_url,
             profiling=profiling,
             ssl_verify=ssl_verify,
         )
+        self._check = True
         self.auth = Auth(self)
         self.coach = Coach(self)
         self.nav = Nav(self)
@@ -56,7 +58,13 @@ class Stretch:
             obj._user_id = kwargs["user_id"]
             obj._provider.set_user(obj._user_id)
         if "access_token" in kwargs:
+            self._check = False
             obj._access_token = kwargs["access_token"]
-            obj._provider.set_token(access_token=obj._access_token)
+            if "access_expire" in kwargs:
+                access_expire = kwargs["access_expire"]
+            else:
+                access_expire = 120
+
+            obj._provider.set_token(access_token=obj._access_token, access_expire=access_expire)
             obj._provider._access_expire = None
         return obj
