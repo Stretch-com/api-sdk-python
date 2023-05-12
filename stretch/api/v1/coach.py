@@ -46,3 +46,9 @@ class Coach(ApiBase):
         Delete service
         """
         return self._fetch(Method.delete, f"/coach/service/{service_id}", json=kwargs)
+
+    def get_coach_profile(self, coach_id: UUID, **kwargs):
+        """
+        Get coach profile
+        """
+        return self._fetch(Method.get, f"/coach/{coach_id}/profile", json=kwargs)
