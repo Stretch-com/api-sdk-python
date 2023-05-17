@@ -1,5 +1,6 @@
 import logging
 from urllib.parse import urlparse
+from uuid import UUID
 
 import requests
 
@@ -41,6 +42,12 @@ class Storage(ApiBase):
             files={"file": self._get_file_stream(file, filename)},
         )
 
+    def get_images(self, **kwargs):
+        """
+        Get certificates
+        """
+        return self._fetch(Method.get, f"/storage/images", json=kwargs)
+
     def post_image(self, file, title: str = None, filename=None):
         """
         Upload image to gallery
@@ -52,15 +59,48 @@ class Storage(ApiBase):
             Method.post, "/storage/image", json=data, files={"file": self._get_file_stream(file, filename)}
         )
 
-    def post_certificate(self, file, title: str = None, description: str = None, filename=None):
+    def put_image(self, image_id: UUID, file=None, filename=None, **kwargs):
         """
         Upload certificate
         """
-        data = None
-        if title is not None:
-            data = {"title": title}
-            if description is not None:
-                data["description"] = description
+        if file is not None:
+            files = {"file": self._get_file_stream(file, filename)}
+        else:
+            files = None
+        return self._fetch(Method.put, f"/storage/image/{image_id}", json=kwargs, files=files)
+
+    def delete_image(self, image_id: UUID, **kwargs):
+        """
+        Delete certificate
+        """
+        return self._fetch(Method.delete, f"/storage/image/{image_id}", json=kwargs)
+
+    def get_certificates(self, **kwargs):
+        """
+        Get certificates
+        """
+        return self._fetch(Method.get, f"/storage/certificates", json=kwargs)
+
+    def post_certificate(self, file, filename=None, **kwargs):
+        """
+        Upload certificate
+        """
         return self._fetch(
-            Method.post, "/storage/certificate", json=data, files={"file": self._get_file_stream(file, filename)}
+            Method.post, "/storage/certificate", json=kwargs, files={"file": self._get_file_stream(file, filename)}
         )
+
+    def put_certificate(self, certificate_id: UUID, file=None, filename=None, **kwargs):
+        """
+        Upload certificate
+        """
+        if file is not None:
+            files = {"file": self._get_file_stream(file, filename)}
+        else:
+            files = None
+        return self._fetch(Method.put, f"/storage/certificate/{certificate_id}", data=kwargs, files=files)
+
+    def delete_certificate(self, certificate_id: UUID, **kwargs):
+        """
+        Delete certificate
+        """
+        return self._fetch(Method.delete, f"/storage/certificate/{certificate_id}", json=kwargs)
