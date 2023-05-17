@@ -82,8 +82,14 @@ class Auth(ApiBase):
         self._update_token(Token.create(**response.dict()), True)
         return response
 
+    def put_password_reset(self, **kwargs):
+        """
+        Complete user password
+        """
+        return self._fetch(Method.put, "/auth/password-reset", json=kwargs)
+
     def token(
-        self, username: str, password: str, scope: str = None, auto_save: bool = True
+            self, username: str, password: str, scope: str = None, auto_save: bool = True
     ) -> Union[Token, Awaitable[Token]]:
         """
         Get auth token from
