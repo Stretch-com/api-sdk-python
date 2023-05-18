@@ -1,4 +1,3 @@
-import logging
 from urllib.parse import urlparse
 from uuid import UUID
 
@@ -15,9 +14,22 @@ class Storage(ApiBase):
     Auth Stretch API
     """
 
+    def _get_content_type(self, filename: str):
+        content_type = "image/jpeg"
+        ext = filename.split(".")[-1]
+        if ext.lower() == "pdf":
+            content_type = "application/pdf"
+        if ext.lower() in ["png", "webp"]:
+            content_type = f"image/{ext.lower()}"
+        if ext.lower() in ["mp4"]:
+            content_type = f"video/{ext.lower()}"
+        return content_type
+
     def _get_file_stream(self, file, filename=None):
         if isinstance(file, str):
             url = urlparse(file)
+            if filename is None:
+                filename = url.path
             if url.scheme in ["http", "https"]:
                 r = requests.get(file, allow_redirects=True)
                 filestream = r.content
@@ -27,10 +39,7 @@ class Storage(ApiBase):
         else:
             filestream = file
             filename = filename if filename else "stream"
-
-        logging.info(f"File stream: {filename} : {filestream}")
-
-        return filename, filestream, "image/jpeg"
+        return filename, filestream, self._get_content_type(filename)
 
     def post_avatar(self, file, filename=None):
         """
@@ -46,7 +55,7 @@ class Storage(ApiBase):
         """
         Get certificates
         """
-        return self._fetch(Method.get, f"/storage/images", json=kwargs)
+        return self._fetch(Method.get, "/storage/images", json=kwargs)
 
     def post_image(self, file, title: str = None, filename=None):
         """
@@ -56,7 +65,7 @@ class Storage(ApiBase):
         if title is not None:
             data = {"title": title}
         return self._fetch(
-            Method.post, "/storage/image", json=data, files={"file": self._get_file_stream(file, filename)}
+            Method.post, "/storage/image", data=data, files={"file": self._get_file_stream(file, filename)}
         )
 
     def put_image(self, image_id: UUID, file=None, filename=None, **kwargs):
@@ -67,7 +76,7 @@ class Storage(ApiBase):
             files = {"file": self._get_file_stream(file, filename)}
         else:
             files = None
-        return self._fetch(Method.put, f"/storage/image/{image_id}", json=kwargs, files=files)
+        return self._fetch(Method.put, f"/storage/image/{image_id}", data=kwargs, files=files)
 
     def delete_image(self, image_id: UUID, **kwargs):
         """
@@ -79,14 +88,14 @@ class Storage(ApiBase):
         """
         Get certificates
         """
-        return self._fetch(Method.get, f"/storage/certificates", json=kwargs)
+        return self._fetch(Method.get, "/storage/certificates", json=kwargs)
 
     def post_certificate(self, file, filename=None, **kwargs):
         """
         Upload certificate
         """
         return self._fetch(
-            Method.post, "/storage/certificate", json=kwargs, files={"file": self._get_file_stream(file, filename)}
+            Method.post, "/storage/certificate", data=kwargs, files={"file": self._get_file_stream(file, filename)}
         )
 
     def put_certificate(self, certificate_id: UUID, file=None, filename=None, **kwargs):

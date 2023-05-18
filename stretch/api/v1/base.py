@@ -22,9 +22,10 @@ class ResponseStruct:
             camel_case = "".join([s[0].lower(), s[1:]])
             if camel_case in self.__dict__:
                 return getattr(self, camel_case)
-        raise AttributeError(
-            f"Stretch API Response don't have property '{item}' check list: {', '.join(self.__dict__.keys())}"
-        )
+        return None
+        # raise AttributeError(
+        #    f"Stretch API Response don't have property '{item}' check list: {', '.join(self.__dict__.keys())}"
+        # )
 
     def dict(self) -> dict:
         return self.__dict__
