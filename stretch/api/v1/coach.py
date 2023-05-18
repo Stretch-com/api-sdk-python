@@ -2,9 +2,10 @@ from uuid import UUID
 
 from stretch.client.base import Method
 
-from .base import ApiBase
+from .base import ApiBase, api_decoration_func, for_all_methods
 
 
+@for_all_methods(api_decoration_func)
 class Coach(ApiBase):
     """
     Coach Stretch API
@@ -45,3 +46,9 @@ class Coach(ApiBase):
         Delete service
         """
         return self._fetch(Method.delete, f"/coach/service/{service_id}", json=kwargs)
+
+    def get_coach_profile(self, coach_id: UUID, **kwargs):
+        """
+        Get coach profile
+        """
+        return self._fetch(Method.get, f"/coach/{coach_id}/profile", json=kwargs)

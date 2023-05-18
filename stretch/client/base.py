@@ -13,9 +13,16 @@ class Method(str, Enum):
     delete = "delete"
 
 
-class StretchExceptions(Exception):
+class StretchException(Exception):
     def __init__(self, code=401, data=None):
-        super(StretchExceptions, self).__init__(f"Request exception: [{code}] {data}")
+        self.code = code
+        self.data = data
+        super(StretchException, self).__init__(f"Request exception: [{code}] {data}")
+
+    def errors(self):
+        if self.code == 422 and self.data["error"] == "validation-error":
+            return {efl["field"]: efl["message"] for efl in self.data["fields"]}
+        return {}
 
 
 class WebClient(ABC):
@@ -55,15 +62,15 @@ class WebClient(ABC):
             self._refresh_expire = (
                 datetime.datetime.utcnow() + datetime.timedelta(seconds=refresh_expire) - datetime.timedelta(seconds=30)
             )
-
-        self._default_headers = {
-            "Authorization": f"{token_type} {self._access_token}",
-            # "Content-Type": "application/json",
-        }
+        if self._default_headers is None:
+            self._default_headers = {}
+        self._default_headers["Authorization"] = f"{token_type} {self._access_token}"
 
     def set_user(self, user_id):
         self._user_id = user_id
         if self._user_id is not None:
+            if self._default_headers is None:
+                self._default_headers = {}
             self._default_headers["Authorization-User"] = self._user_id
 
     @property

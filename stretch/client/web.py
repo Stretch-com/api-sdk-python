@@ -6,7 +6,7 @@ import requests
 
 from stretch.api.v1.schema.token import Token
 
-from .base import Method, StretchExceptions, WebClient
+from .base import Method, StretchException, WebClient
 
 
 class SyncWebClient(WebClient):
@@ -15,7 +15,7 @@ class SyncWebClient(WebClient):
         self._session = requests.Session()
         self._session.verify = self._ssl_verify
 
-    def set_token(self, access_token, access_expire, refresh_token, refresh_expire, token_type="Bearer"):
+    def set_token(self, access_token, access_expire=None, refresh_token=None, refresh_expire=None, token_type="Bearer"):
         super(SyncWebClient, self).set_token(access_token, access_expire, refresh_token, refresh_expire, token_type)
         self._session.headers = self._default_headers
 
@@ -77,6 +77,6 @@ class SyncWebClient(WebClient):
                 )
             return response.json()
         if response is not None:
-            raise StretchExceptions(response.status_code, response.json())
+            raise StretchException(response.status_code, response.json())
 
-        raise StretchExceptions(400, "Request method wrong")
+        raise StretchException(400, {"message": "Request method wrong", "error": "method-error"})

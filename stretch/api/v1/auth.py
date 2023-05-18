@@ -2,10 +2,11 @@ from typing import Awaitable, Union
 
 from stretch.client.base import Method
 
-from .base import ApiBase
+from .base import ApiBase, api_decoration_func, for_all_methods
 from .schema.token import Token
 
 
+@for_all_methods(api_decoration_func)
 class Auth(ApiBase):
     """
     Auth Stretch API
@@ -80,6 +81,12 @@ class Auth(ApiBase):
         response = self._fetch(Method.put, "/auth/complete", json=kwargs)
         self._update_token(Token.create(**response.dict()), True)
         return response
+
+    def put_password_reset(self, **kwargs):
+        """
+        Complete user password
+        """
+        return self._fetch(Method.put, "/auth/password-reset", json=kwargs)
 
     def token(
         self, username: str, password: str, scope: str = None, auto_save: bool = True
