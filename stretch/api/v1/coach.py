@@ -58,3 +58,9 @@ class Coach(ApiBase):
         Get coach profile
         """
         return self._fetch(Method.get, f"/coach/{coach_id}/profile", json=kwargs)
+
+    def put_available(self, **kwargs):
+        """
+        Update coach availability
+        """
+        return self._fetch(Method.put, "/coach/available", json=kwargs)
