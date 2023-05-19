@@ -47,6 +47,12 @@ class Coach(ApiBase):
         """
         return self._fetch(Method.delete, f"/coach/service/{service_id}", json=kwargs)
 
+    def put_services_order(self, **kwargs):
+        """
+        Update services order
+        """
+        return self._fetch(Method.put, "/coach/services/order", json=kwargs)
+
     def get_coach_profile(self, coach_id: UUID, **kwargs):
         """
         Get coach profile
