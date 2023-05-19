@@ -84,6 +84,12 @@ class Storage(ApiBase):
         """
         return self._fetch(Method.delete, f"/storage/image/{image_id}", json=kwargs)
 
+    def put_images_order(self, **kwargs):
+        """
+        Update images order
+        """
+        return self._fetch(Method.put, "/storage/images/order", json=kwargs)
+
     def get_certificates(self, **kwargs):
         """
         Get certificates
@@ -113,3 +119,9 @@ class Storage(ApiBase):
         Delete certificate
         """
         return self._fetch(Method.delete, f"/storage/certificate/{certificate_id}", json=kwargs)
+
+    def put_certificates_order(self, **kwargs):
+        """
+        Update images order
+        """
+        return self._fetch(Method.put, "/storage/certificates/order", json=kwargs)
