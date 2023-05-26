@@ -51,6 +51,12 @@ class Storage(ApiBase):
             files={"file": self._get_file_stream(file, filename)},
         )
 
+    def delete_avatar(self, **kwargs):
+        """
+        Delete avatar
+        """
+        return self._fetch(Method.delete, "/storage/profile/avatar", **kwargs)
+
     def get_images(self, **kwargs):
         """
         Get certificates
